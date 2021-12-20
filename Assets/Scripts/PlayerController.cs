@@ -120,6 +120,7 @@ public class PlayerController : MonoBehaviour
                         }
                         break;
                     case "KeyUp":
+                            Debug.Log("KEYUP");
                         switch (input.key)
                         {
                             case "D":

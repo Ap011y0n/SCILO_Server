@@ -441,39 +441,39 @@ public class ServerUDP : MonoBehaviour
         while (true)
         {
             if (client1.active)
-            try
-            {
-                byte[] msg = new Byte[2000];
-                int recv = client1.socket.ReceiveFrom(msg, ref Remote);
-                //Debug.Log(Encoding.ASCII.GetString(msg));
-                MemoryStream stream = new MemoryStream(msg);
-                CustomClasses.Message m = deserializeJson(stream);
-                message.addType("acknowledgement");
-                message.ACK = m.ACK;
-               
+                try
+                {
+                    byte[] msg = new Byte[2000];
+                    int recv = client1.socket.ReceiveFrom(msg, ref Remote);
+                    //Debug.Log(Encoding.ASCII.GetString(msg));
+                    MemoryStream stream = new MemoryStream(msg);
+                    CustomClasses.Message m = deserializeJson(stream);
+                    message.addType("acknowledgement");
+                    message.ACK = m.ACK;
 
-                foreach (CustomClasses.Input input in m.inputs)
-                {
-                    playerController1.AddInput(input);
-                }
-                if(m.messageTypes.Contains("movement"))
-                {
+
+                    foreach (CustomClasses.Input input in m.inputs)
+                    {
+                        playerController1.AddInput(input);
+                    }
+                    if (m.messageTypes.Contains("movement"))
+                    {
                         foreach (CustomClasses.SceneObject obj in m.objects)
                         {
                             Objs2Update.Add(obj);
                         }
                     }
 
-            }
-            catch (SystemException e)
-            {
-                Debug.Log("Couldn't receive message");
-                Debug.Log(e.ToString());
+                }
+                catch (SystemException e)
+                {
+                    Debug.Log("Couldn't receive message");
+                    Debug.Log(e.ToString());
                     client1.active = false;
-            }
-       
+                }
+
         }
-       
+
     }
     void ThreadReceive2()
     {
@@ -495,8 +495,14 @@ public class ServerUDP : MonoBehaviour
                 {
                     playerController2.AddInput(input);
                 }
-
-            }
+                    if (m.messageTypes.Contains("movement"))
+                    {
+                        foreach (CustomClasses.SceneObject obj in m.objects)
+                        {
+                            Objs2Update.Add(obj);
+                        }
+                    }
+                }
             catch (SystemException e)
             {
                 Debug.Log("Couldn't receive message");
@@ -582,7 +588,7 @@ public class ServerUDP : MonoBehaviour
         BinaryReader reader = new BinaryReader(stream);
         stream.Seek(0, SeekOrigin.Begin);
         string json = reader.ReadString();
-        Debug.Log(json);
+      //  Debug.Log(json);
         m = JsonUtility.FromJson<CustomClasses.Message>(json);
         return m;
     }
