@@ -44,7 +44,7 @@ public class enemy : MonoBehaviour
             {
                 transform.rotation = Quaternion.Euler(0, 0, 0);
             }
-            if((System.DateTime.UtcNow - time).Seconds > 5)
+            if((System.DateTime.UtcNow - time).Seconds > 2)
             {
                 time = System.DateTime.UtcNow;
                 CustomClasses.Spawn newSpawn = new CustomClasses.Spawn();

@@ -14,8 +14,10 @@ namespace CustomClasses
     [System.Serializable]
     public class WelcomeMessage
     {
-        public string GUID1;
-        public string GUID2;
+        public string GUIDplayer1;
+        public string GUIDplayer2;
+        public string GUIDgun1;
+        public string GUIDgun2;
         public List<Spawn> spawns = new List<Spawn>();
         public List<SceneObject> objects = new List<SceneObject>();
 
@@ -45,6 +47,7 @@ namespace CustomClasses
         private int lastModified;
         private bool modified;
         public Vector3 position;
+        public Quaternion rotation;
         public string guid;
         public GameObject getGO()
         {
@@ -148,6 +151,8 @@ public class ServerUDP : MonoBehaviour
     public List<CustomClasses.Spawn> waitingforspawn = new List<CustomClasses.Spawn>();
     [HideInInspector]
     public List<CustomClasses.Remove> waitingforremoval = new List<CustomClasses.Remove>();
+    [HideInInspector]
+    public List<CustomClasses.SceneObject> Objs2Update = new List<CustomClasses.SceneObject>();
 
     public GameObject[] SceneGameObjects;
 
@@ -157,6 +162,8 @@ public class ServerUDP : MonoBehaviour
     PlayerController playerController1;
     PlayerController playerController2;
     CustomClasses.Message message = new CustomClasses.Message();
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -173,6 +180,7 @@ public class ServerUDP : MonoBehaviour
                 newSceneObject.setGO(go);
                 newSceneObject.name = go.name;
                 newSceneObject.position = go.transform.position;
+                newSceneObject.rotation = go.transform.rotation;
                 newSceneObject.setModDate(System.DateTime.UtcNow.Second);
                 newSceneObject.setMod(false);
                 newSceneObject.guid = Guid.NewGuid().ToString();
@@ -186,8 +194,24 @@ public class ServerUDP : MonoBehaviour
     void Update()
     {
         frameCounter++;
+        for (int i = 0; i < Objs2Update.Count; i++)
+        {
+           
+                for(int j = 0; j < DynamicGameObjects.Count; j++)
+                {
+                    if(Objs2Update[i].guid == DynamicGameObjects[j].guid)
+                    {
+                        GameObject obj2update = DynamicGameObjects[j].getGO();
+                        //obj2update.transform.position = Objs2Update[i].position;
+                        obj2update.transform.rotation = Objs2Update[i].rotation;
+                    }
+                }
+                
+
+            
+        }
     }
-    
+
     public void ExecuteScript()
     {
 
@@ -197,18 +221,18 @@ public class ServerUDP : MonoBehaviour
         client1.socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         client1.socket.Bind(ipep);
 
-        ipep = new IPEndPoint(IPAddress.Any, port+1);
+        ipep = new IPEndPoint(IPAddress.Any, port + 1);
         client2.socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         client2.socket.Bind(ipep);
 
-      
+
         sender = new IPEndPoint(IPAddress.Any, 0);
         Remote = (EndPoint)(sender);
 
         sendThread = new Thread(ThreadSend);
         threadstart1 = new Thread(ThreadStart1);
         threadstart2 = new Thread(ThreadStart2);
-     
+
         receiveThread1 = new Thread(ThreadReceive1);
         receiveThread2 = new Thread(ThreadReceive2);
 
@@ -219,7 +243,7 @@ public class ServerUDP : MonoBehaviour
         sendThread.Start();
     }
 
-    
+
 
     void ThreadStart1()
     {
@@ -237,8 +261,10 @@ public class ServerUDP : MonoBehaviour
                     Debug.Log("Message received: " + Encoding.ASCII.GetString(msg));
 
                     CustomClasses.WelcomeMessage welcome = new CustomClasses.WelcomeMessage();
-                    welcome.GUID1 = DynamicGameObjects[0].guid;
-                    welcome.GUID2 = DynamicGameObjects[1].guid;
+                    welcome.GUIDplayer1 = DynamicGameObjects[0].guid;
+                    welcome.GUIDplayer2 = DynamicGameObjects[1].guid;
+                    welcome.GUIDgun1 = DynamicGameObjects[2].guid;
+                    welcome.GUIDgun2 = DynamicGameObjects[3].guid;
 
                     for (int i = 0; i < DynamicGameObjects.Count; i++)
                     {
@@ -283,8 +309,10 @@ public class ServerUDP : MonoBehaviour
                     Debug.Log("Message received: " + Encoding.ASCII.GetString(msg));
 
                     CustomClasses.WelcomeMessage welcome = new CustomClasses.WelcomeMessage();
-                    welcome.GUID1 = DynamicGameObjects[0].guid;
-                    welcome.GUID2 = DynamicGameObjects[1].guid;
+                    welcome.GUIDplayer1 = DynamicGameObjects[0].guid;
+                    welcome.GUIDplayer2 = DynamicGameObjects[1].guid;
+                    welcome.GUIDgun1 = DynamicGameObjects[2].guid;
+                    welcome.GUIDgun2 = DynamicGameObjects[3].guid;
                     for (int i = 0; i < DynamicGameObjects.Count; i++)
                     {
                         CustomClasses.Spawn newSpawn = new CustomClasses.Spawn();
@@ -428,6 +456,13 @@ public class ServerUDP : MonoBehaviour
                 {
                     playerController1.AddInput(input);
                 }
+                if(m.messageTypes.Contains("movement"))
+                {
+                        foreach (CustomClasses.SceneObject obj in m.objects)
+                        {
+                            Objs2Update.Add(obj);
+                        }
+                    }
 
             }
             catch (SystemException e)

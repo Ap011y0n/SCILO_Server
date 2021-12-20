@@ -312,6 +312,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &712741283 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8424935420353972656, guid: 5d9b477d30ccb6c47a0fdada4796368b, type: 3}
+  m_PrefabInstance: {fileID: 8424935421508991698}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -446,9 +451,12 @@ MonoBehaviour:
   - {fileID: 3353062434799952588, guid: 743bc94084c74ae43884b367ebeca607, type: 3}
   waitingforspawn: []
   waitingforremoval: []
+  Objs2Update: []
   SceneGameObjects:
   - {fileID: 919132148124149927}
   - {fileID: 1950336329}
+  - {fileID: 712741283}
+  - {fileID: 1695271126}
 --- !u!4 &1131203302
 Transform:
   m_ObjectHideFlags: 0
@@ -655,6 +663,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 990}
+--- !u!1 &1695271126 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 793744793031456901, guid: 8fa65e2666f0efc49b4b1e52a2386acc, type: 3}
+  m_PrefabInstance: {fileID: 793744792841456329}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1950336329 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 793744794787401600, guid: 8fa65e2666f0efc49b4b1e52a2386acc, type: 3}
@@ -715,6 +728,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player2
       objectReference: {fileID: 0}
+    - target: {fileID: 793744794787498343, guid: 8fa65e2666f0efc49b4b1e52a2386acc, type: 3}
+      propertyPath: otherPlayer
+      value: 
+      objectReference: {fileID: 919132148124149927}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8fa65e2666f0efc49b4b1e52a2386acc, type: 3}
 --- !u!1 &919132148124149927 stripped
@@ -773,6 +790,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8424935420353972657, guid: 5d9b477d30ccb6c47a0fdada4796368b, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8424935420353972662, guid: 5d9b477d30ccb6c47a0fdada4796368b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8424935420394991400, guid: 5d9b477d30ccb6c47a0fdada4796368b, type: 3}
+      propertyPath: otherPlayer
+      value: 
+      objectReference: {fileID: 1950336329}
     - target: {fileID: 8658746364499513973, guid: 5d9b477d30ccb6c47a0fdada4796368b, type: 3}
       propertyPath: m_Name
       value: Player1

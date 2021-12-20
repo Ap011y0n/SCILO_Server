@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     public GameObject gun;
     public GameObject bullet;
     public GameObject enemy;
+    public GameObject otherPlayer;
 
     List<CustomClasses.Input> inputs = new List<CustomClasses.Input>();
     private GameObject server;
@@ -207,6 +208,16 @@ public class PlayerController : MonoBehaviour
         //    changeState(State.JUMP);
 
         //}
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("EnemyBullet"))
+        {
+            Vector3 respawnPos = otherPlayer.transform.position;
+            respawnPos.y += 3;
+            transform.position = respawnPos;
+        }
     }
     public void AddInput(CustomClasses.Input input)
     {
