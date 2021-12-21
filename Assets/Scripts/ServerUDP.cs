@@ -372,7 +372,7 @@ public class ServerUDP : MonoBehaviour
                     {
                         for (int j = 0; j < DynamicGameObjects.Count; j++)
                         {
-                            if (DynamicGameObjects[j].name == waitingforremoval[i].name)
+                            if (DynamicGameObjects[j].guid == waitingforremoval[i].guid)
                             {
                                 DynamicGameObjects.RemoveAt(j);
                                 j--;
