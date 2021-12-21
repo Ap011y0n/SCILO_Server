@@ -163,7 +163,8 @@ public class ServerUDP : MonoBehaviour
     PlayerController playerController2;
     CustomClasses.Message message = new CustomClasses.Message();
 
-
+    int ACK1 = -1;
+    int ACK2 = -1;
 
     // Start is called before the first frame update
     void Start()
@@ -391,14 +392,21 @@ public class ServerUDP : MonoBehaviour
                 }
 
                
-                    MemoryStream stream = new MemoryStream();
-                    stream = serializeJson(message);
+              
                     if (client1.active)
                     {
                         try
                         {
-                            client1.socket.SendTo(stream.ToArray(), SocketFlags.None, client1.remote);
-
+                        if (ACK1 != -1)
+                        {
+                            message.addType("acknowledgement");
+                            message.ACK = ACK1;
+                            ACK1 = -1;
+                        }
+                        MemoryStream stream = new MemoryStream();
+                        stream = serializeJson(message);
+                        client1.socket.SendTo(stream.ToArray(), SocketFlags.None, client1.remote);
+                        message.messageTypes.Remove("acknowledgement");
                         }
                         catch (SystemException e)
                         {
@@ -411,7 +419,16 @@ public class ServerUDP : MonoBehaviour
                     {
                         try
                         {
-                            client2.socket.SendTo(stream.ToArray(), SocketFlags.None, client2.remote);
+                        if (ACK2 != -1)
+                        {
+                            message.addType("acknowledgement");
+                            message.ACK = ACK2;
+                            ACK2 = -1;
+                        }
+                        MemoryStream stream = new MemoryStream();
+                        stream = serializeJson(message);
+                        client2.socket.SendTo(stream.ToArray(), SocketFlags.None, client2.remote);
+                        message.messageTypes.Remove("acknowledgement");
 
                         }
                         catch (SystemException e)
@@ -448,9 +465,13 @@ public class ServerUDP : MonoBehaviour
                     //Debug.Log(Encoding.ASCII.GetString(msg));
                     MemoryStream stream = new MemoryStream(msg);
                     CustomClasses.Message m = deserializeJson(stream);
-                    message.addType("acknowledgement");
-                    message.ACK = m.ACK;
-
+                    if(message.messageTypes.Contains("acknowledgement"))
+                    {
+                       
+                        ACK1 = m.ACK;
+                     //   Debug.Log("ACK = " + m.ACK);
+                    }
+                   
 
                     foreach (CustomClasses.Input input in m.inputs)
                     {
@@ -487,11 +508,14 @@ public class ServerUDP : MonoBehaviour
                 //Debug.Log(Encoding.ASCII.GetString(msg));
                 MemoryStream stream = new MemoryStream(msg);
                 CustomClasses.Message m = deserializeJson(stream);
-                message.addType("acknowledgement");
-                message.ACK = m.ACK;
+                    if (message.messageTypes.Contains("acknowledgement"))
+                    {
+                        message.addType("acknowledgement");
+                        ACK2 = m.ACK;
+                      //  Debug.Log("ACK = " + m.ACK);
+                    }
 
-
-                foreach (CustomClasses.Input input in m.inputs)
+                    foreach (CustomClasses.Input input in m.inputs)
                 {
                     playerController2.AddInput(input);
                 }
