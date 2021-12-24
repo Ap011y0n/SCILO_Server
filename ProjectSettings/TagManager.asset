@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - floor
+  - PlayerBullet
+  - Enemy
+  - EnemyBullet
+  - EnemySpawn
+  - Threshold
   layers:
   - Default
   - TransparentFX

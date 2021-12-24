@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
 
     List<CustomClasses.Input> inputs = new List<CustomClasses.Input>();
     private GameObject server;
+    private GameObject spawnManager;
     enum State
     {
         IDLE,
@@ -28,6 +29,7 @@ public class PlayerController : MonoBehaviour
         state = State.IDLE;
         body = this.gameObject.GetComponent<Rigidbody>();
         server = GameObject.Find("server");
+        spawnManager = GameObject.Find("SpawnManager");
     }
 
     void changeState(State newState)
@@ -58,6 +60,7 @@ public class PlayerController : MonoBehaviour
             state = State.IDLE;
         }
     }
+
     private void ProcessInput()
     {
         //de momento, el movimiento va asi, pero habria que hacer dos estados nuevos, de moverse derecha e izquierda, teniendo en cuenta si se esta en el suelo o no
@@ -218,6 +221,14 @@ public class PlayerController : MonoBehaviour
             Vector3 respawnPos = otherPlayer.transform.position;
             respawnPos.y += 3;
             transform.position = respawnPos;
+        }
+
+        if (other.gameObject.CompareTag("Threshold"))
+        {
+            Debug.Log("Threshold " + spawnManager.GetComponent<SpawnManager>().GetThreshold() + " passed");
+            spawnManager.GetComponent<SpawnManager>().AddThreshold();
+            spawnManager.GetComponent<SpawnManager>().SetCounter(2950);
+            other.gameObject.SetActive(false);
         }
     }
     public void AddInput(CustomClasses.Input input)
