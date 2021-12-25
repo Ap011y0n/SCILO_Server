@@ -3320,6 +3320,8 @@ MonoBehaviour:
   player1: {fileID: 919132148124149927}
   player2: {fileID: 1950336329}
   victory: 0
+  deathCounter: 0
+  maxdeaths: 10
   prefabs:
   - {fileID: 9088995744946598045, guid: 829d82ee7d8c86a489fc424424dc3541, type: 3}
   - {fileID: 9120053280871528840, guid: 523b630d65eeb444592290526c3bee65, type: 3}
@@ -3332,6 +3334,7 @@ MonoBehaviour:
   - {fileID: 1950336329}
   - {fileID: 712741283}
   - {fileID: 799144384}
+  addRespawn2Message: 0
 --- !u!4 &1131203302
 Transform:
   m_ObjectHideFlags: 0
@@ -4276,7 +4279,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1387424694}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.03203422, y: 2.09, z: 12.65}
+  m_LocalPosition: {x: -0.03203422, y: 6.2, z: 296.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -6487,7 +6490,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8314167583112857807, guid: 5d9b477d30ccb6c47a0fdada4796368b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.370262
+      value: 284.5
       objectReference: {fileID: 0}
     - target: {fileID: 8314167583112857807, guid: 5d9b477d30ccb6c47a0fdada4796368b, type: 3}
       propertyPath: m_LocalRotation.w

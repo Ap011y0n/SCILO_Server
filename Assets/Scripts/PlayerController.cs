@@ -233,6 +233,7 @@ public class PlayerController : MonoBehaviour
             respawnPos.y += 3;
             transform.position = respawnPos;
             server.GetComponent<ServerUDP>().deathCounter++;
+            server.GetComponent<ServerUDP>().addRespawn2Message = true;
         }
 
         if (other.gameObject.CompareTag("Threshold"))

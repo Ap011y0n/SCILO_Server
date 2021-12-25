@@ -14,9 +14,14 @@ public class SceneController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F2))
-        {
+        //if (Input.GetKeyDown(KeyCode.F2))
+        //{
+        //    server.victory = true;
+        //}
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Player"))
             server.victory = true;
-        }
     }
 }

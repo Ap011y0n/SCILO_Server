@@ -16,6 +16,7 @@ namespace CustomClasses
     [System.Serializable]
     public class WelcomeMessage
     {
+        public int livesLeft = 10;
         public string GUIDplayer1;
         public string GUIDplayer2;
         public string GUIDgun1;
@@ -28,6 +29,7 @@ namespace CustomClasses
     public class Message
     {
         public int ACK = -1;
+        public int livesLeft = 10;
         public List<string> messageTypes = new List<string>();
         public List<SceneObject> objects = new List<SceneObject>();
         public List<Input> inputs = new List<Input>();
@@ -174,6 +176,7 @@ public class ServerUDP : MonoBehaviour
     PlayerController playerController2;
     CustomClasses.Message message = new CustomClasses.Message();
 
+    public bool addRespawn2Message = false;
     int ACK1 = -1;
     int ACK2 = -1;
 
@@ -287,7 +290,7 @@ public class ServerUDP : MonoBehaviour
                     welcome.GUIDplayer2 = DynamicGameObjects[1].guid;
                     welcome.GUIDgun1 = DynamicGameObjects[2].guid;
                     welcome.GUIDgun2 = DynamicGameObjects[3].guid;
-
+                    welcome.livesLeft = maxdeaths - deathCounter;
                     for (int i = 0; i < DynamicGameObjects.Count; i++)
                     {
                         CustomClasses.Spawn newSpawn = new CustomClasses.Spawn();
@@ -335,6 +338,8 @@ public class ServerUDP : MonoBehaviour
                     welcome.GUIDplayer2 = DynamicGameObjects[1].guid;
                     welcome.GUIDgun1 = DynamicGameObjects[2].guid;
                     welcome.GUIDgun2 = DynamicGameObjects[3].guid;
+                    welcome.livesLeft = maxdeaths - deathCounter;
+
                     for (int i = 0; i < DynamicGameObjects.Count; i++)
                     {
                         CustomClasses.Spawn newSpawn = new CustomClasses.Spawn();
@@ -420,10 +425,17 @@ public class ServerUDP : MonoBehaviour
                 playerState2.player = DynamicGameObjects[1];
                 playerState2.state = playerController2.GetPlayerState();
                 message.states.Add(playerState2);
-
+               
+                if (addRespawn2Message)
+                {
+                    message.addType("respawn");
+                    message.livesLeft = maxdeaths - deathCounter;
+                    addRespawn2Message = false;
+                }
 
                 if (client1.active)
                 {
+                   
                     if(deathCounter > maxdeaths)
                         message.addType("Defeat");
 
