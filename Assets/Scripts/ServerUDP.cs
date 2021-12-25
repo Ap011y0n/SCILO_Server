@@ -402,9 +402,10 @@ public class ServerUDP : MonoBehaviour
                 playerState.state = playerController1.GetPlayerState();
                 message.states.Add(playerState);
 
-                playerState.player = DynamicGameObjects[1];
-                playerState.state = playerController2.GetPlayerState();
-                message.states.Add(playerState);
+                CustomClasses.PlayerState playerState2 = new CustomClasses.PlayerState();
+                playerState2.player = DynamicGameObjects[1];
+                playerState2.state = playerController2.GetPlayerState();
+                message.states.Add(playerState2);
 
 
                 if (client1.active)
