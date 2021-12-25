@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     enum State
     {
         IDLE,
+        WALK,
         JUMP
     }
     State state;

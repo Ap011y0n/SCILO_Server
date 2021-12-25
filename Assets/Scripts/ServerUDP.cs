@@ -31,6 +31,7 @@ namespace CustomClasses
         public List<Input> inputs = new List<Input>();
         public List<Remove> removals = new List<Remove>();
         public List<Spawn> spawns = new List<Spawn>();
+        public List<string> states = new List<string>();
 
         public void addType(string type)
         {
@@ -476,6 +477,10 @@ public class ServerUDP : MonoBehaviour
                     foreach (CustomClasses.Input input in m.inputs)
                     {
                         playerController1.AddInput(input);
+                    }
+                    foreach (string state in m.states)
+                    {
+
                     }
                     if (m.messageTypes.Contains("movement"))
                     {
