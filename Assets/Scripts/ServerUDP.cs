@@ -31,7 +31,7 @@ namespace CustomClasses
         public List<Input> inputs = new List<Input>();
         public List<Remove> removals = new List<Remove>();
         public List<Spawn> spawns = new List<Spawn>();
-        public List<string> states = new List<string>();
+        public List<PlayerState> states = new List<PlayerState>();
 
         public void addType(string type)
         {
@@ -114,8 +114,14 @@ namespace CustomClasses
             return Obj;
         }
     }
+    [System.Serializable]
+    public class PlayerState
+    {
+        public string state;
+        public SceneObject player;
+    }
     #endregion
-    
+
 }
 
 
@@ -391,62 +397,70 @@ public class ServerUDP : MonoBehaviour
                     message.objects = UpdatedGameObjects;
                     message.addType("movement");
                 }
+                CustomClasses.PlayerState playerState = new CustomClasses.PlayerState();
+                playerState.player = DynamicGameObjects[0];
+                playerState.state = playerController1.GetPlayerState();
+                message.states.Add(playerState);
 
-               
-              
-                    if (client1.active)
+                playerState.player = DynamicGameObjects[1];
+                playerState.state = playerController2.GetPlayerState();
+                message.states.Add(playerState);
+
+
+                if (client1.active)
+                {
+                    try
                     {
-                        try
-                        {
-                        if (ACK1 != -1)
-                        {
-                            message.addType("acknowledgement");
-                            message.ACK = ACK1;
-                            ACK1 = -1;
-                        }
-                        MemoryStream stream = new MemoryStream();
-                        stream = serializeJson(message);
-                        client1.socket.SendTo(stream.ToArray(), SocketFlags.None, client1.remote);
-                        message.messageTypes.Remove("acknowledgement");
-                        }
-                        catch (SystemException e)
-                        {
-                            Debug.Log("Couldn't send message");
-                            Debug.Log(e.ToString());
-                            client1.active = false;
-                        }
-                    }
-                    if (client2.active)
+                    if (ACK1 != -1)
                     {
-                        try
-                        {
-                        if (ACK2 != -1)
-                        {
-                            message.addType("acknowledgement");
-                            message.ACK = ACK2;
-                            ACK2 = -1;
-                        }
-                        MemoryStream stream = new MemoryStream();
-                        stream = serializeJson(message);
-                        client2.socket.SendTo(stream.ToArray(), SocketFlags.None, client2.remote);
-                        message.messageTypes.Remove("acknowledgement");
-
-                        }
-                        catch (SystemException e)
-                        {
-                            Debug.Log("Couldn't send message");
-                            Debug.Log(e.ToString());
-                            client2.active = false;
-                        }
+                        message.addType("acknowledgement");
+                        message.ACK = ACK1;
+                        ACK1 = -1;
                     }
-                    message.objects.Clear();
-                    message.spawns.Clear();
-                    message.inputs.Clear();
-                    message.removals.Clear();
-                    message.messageTypes.Clear();
+                    MemoryStream stream = new MemoryStream();
+                    stream = serializeJson(message);
+                    client1.socket.SendTo(stream.ToArray(), SocketFlags.None, client1.remote);
+                    message.messageTypes.Remove("acknowledgement");
+                    }
+                    catch (SystemException e)
+                    {
+                        Debug.Log("Couldn't send message");
+                        Debug.Log(e.ToString());
+                        client1.active = false;
+                    }
+                }
+                if (client2.active)
+                {
+                    try
+                    {
+                    if (ACK2 != -1)
+                    {
+                        message.addType("acknowledgement");
+                        message.ACK = ACK2;
+                        ACK2 = -1;
+                    }
+                    MemoryStream stream = new MemoryStream();
+                    stream = serializeJson(message);
+                    client2.socket.SendTo(stream.ToArray(), SocketFlags.None, client2.remote);
+                    message.messageTypes.Remove("acknowledgement");
 
-                    waitingforspawn.Clear();
-                    waitingforremoval.Clear();
+                    }
+                    catch (SystemException e)
+                    {
+                        Debug.Log("Couldn't send message");
+                        Debug.Log(e.ToString());
+                        client2.active = false;
+                    }
+                }
+                message.objects.Clear();
+                message.spawns.Clear();
+                message.inputs.Clear();
+                message.removals.Clear();
+                message.messageTypes.Clear();
+                message.states.Clear();
+
+                waitingforspawn.Clear();
+                waitingforremoval.Clear();
                 
 
                 frameCounter = 0;
@@ -478,10 +492,10 @@ public class ServerUDP : MonoBehaviour
                     {
                         playerController1.AddInput(input);
                     }
-                    foreach (string state in m.states)
+                    /*foreach (string state in m.states)
                     {
-
-                    }
+                        playerController1.AddStates(state);
+                    }*/
                     if (m.messageTypes.Contains("movement"))
                     {
                         foreach (CustomClasses.SceneObject obj in m.objects)
@@ -521,9 +535,13 @@ public class ServerUDP : MonoBehaviour
                     }
 
                     foreach (CustomClasses.Input input in m.inputs)
-                {
-                    playerController2.AddInput(input);
-                }
+                    {
+                        playerController2.AddInput(input);
+                    }
+                    /*foreach (string state in m.states)
+                    {
+                        playerController2.AddStates(state);
+                    }*/
                     if (m.messageTypes.Contains("movement"))
                     {
                         foreach (CustomClasses.SceneObject obj in m.objects)

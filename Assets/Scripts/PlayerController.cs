@@ -15,12 +15,14 @@ public class PlayerController : MonoBehaviour
     public GameObject otherPlayer;
 
     List<CustomClasses.Input> inputs = new List<CustomClasses.Input>();
+    //List<string> states = new List<string>();
     private GameObject server;
     private GameObject spawnManager;
     enum State
     {
         IDLE,
-        WALK,
+        WALK_RIGHT,
+        WALK_LEFT,
         JUMP
     }
     State state;
@@ -38,6 +40,10 @@ public class PlayerController : MonoBehaviour
         switch (newState)
         {
             case State.IDLE:
+                break;
+            case State.WALK_RIGHT:
+                break;
+            case State.WALK_LEFT:
                 break;
             case State.JUMP:
                 Vector3 force = new Vector3(0, jumpforce, 0);
@@ -65,7 +71,7 @@ public class PlayerController : MonoBehaviour
     private void ProcessInput()
     {
         //de momento, el movimiento va asi, pero habria que hacer dos estados nuevos, de moverse derecha e izquierda, teniendo en cuenta si se esta en el suelo o no
-       if(Input.GetKeyDown(KeyCode.F1) && gameObject.name == "Player1")
+        if(Input.GetKeyDown(KeyCode.F1) && gameObject.name == "Player1")
         {
             
             Vector3 pos = transform.position;
@@ -115,11 +121,13 @@ public class PlayerController : MonoBehaviour
                                 temp.z = MovSpeed;
                                 gameObject.GetComponent<Rigidbody>().velocity = temp;
                                 Debug.Log("D key Pressed");
+                                state = State.WALK_RIGHT;
                                 break;
                             case "A":
                                 Debug.Log("A key Pressed");
                                 temp.z = -MovSpeed;
                                 gameObject.GetComponent<Rigidbody>().velocity = temp;
+                                state = State.WALK_LEFT;
                                 break;
                         }
                         break;
@@ -132,6 +140,7 @@ public class PlayerController : MonoBehaviour
                                 temp = gameObject.GetComponent<Rigidbody>().velocity;
                                 temp.z = 0;
                                 gameObject.GetComponent<Rigidbody>().velocity = temp;
+                                state = State.IDLE;
                                 break;
                             case "A":
                                 Debug.Log("A key Up");
@@ -139,44 +148,45 @@ public class PlayerController : MonoBehaviour
                                 temp = gameObject.GetComponent<Rigidbody>().velocity;
                                 temp.z = 0;
                                 gameObject.GetComponent<Rigidbody>().velocity = temp;
+                                state = State.IDLE;
                                 break;
                         }
                         break;
-                        case "KeyDown":
-                            switch (input.key)
-                            {
-                                case "Space":
-                                    if(state != State.JUMP)
-                                    changeState(State.JUMP);
-                                    break;
-                            }
-                            break;
-                        case "MouseButtonDown":
-                            switch(input.key)
-                            {
-                                case "0":
-                                    CustomClasses.Spawn newSpawn = new CustomClasses.Spawn();
-                                    GameObject NewBullet = Instantiate(bullet, gun.transform.position, gun.transform.rotation);
-                                    newSpawn.name = "0";
-                                    newSpawn.setGO(NewBullet);
-                                    newSpawn.position = NewBullet.transform.position;
-                                    newSpawn.rotation = NewBullet.transform.rotation;
-                                    newSpawn.guid = Guid.NewGuid().ToString();
-                                    server.GetComponent<ServerUDP>().waitingforspawn.Add(newSpawn);
+                    case "KeyDown":
+                        switch (input.key)
+                        {
+                            case "Space":
+                                if(state != State.JUMP)
+                                changeState(State.JUMP);
+                                break;
+                        }
+                        break;
+                    case "MouseButtonDown":
+                        switch(input.key)
+                        {
+                            case "0":
+                                CustomClasses.Spawn newSpawn = new CustomClasses.Spawn();
+                                GameObject NewBullet = Instantiate(bullet, gun.transform.position, gun.transform.rotation);
+                                newSpawn.name = "0";
+                                newSpawn.setGO(NewBullet);
+                                newSpawn.position = NewBullet.transform.position;
+                                newSpawn.rotation = NewBullet.transform.rotation;
+                                newSpawn.guid = Guid.NewGuid().ToString();
+                                server.GetComponent<ServerUDP>().waitingforspawn.Add(newSpawn);
 
-                                   
-                                    //CustomClasses.SceneObject newSceneObject = new CustomClasses.SceneObject();
-                                    //newSceneObject.setGO(newSpawn.getGO());
-                                    //newSceneObject.name = newSpawn.getGO().name;
-                                    //newSceneObject.position = newSpawn.getGO().transform.position;
-                                    //newSceneObject.setModDate(System.DateTime.UtcNow.Second);
-                                    //newSceneObject.setMod(false);
-                                    //server.GetComponent<ServerUDP>().AllGameObjects.Add(newSceneObject);
-                                    
+                               
+                                //CustomClasses.SceneObject newSceneObject = new CustomClasses.SceneObject();
+                                //newSceneObject.setGO(newSpawn.getGO());
+                                //newSceneObject.name = newSpawn.getGO().name;
+                                //newSceneObject.position = newSpawn.getGO().transform.position;
+                                //newSceneObject.setModDate(System.DateTime.UtcNow.Second);
+                                //newSceneObject.setMod(false);
+                                //server.GetComponent<ServerUDP>().AllGameObjects.Add(newSceneObject);
+                                
 
-                                    break;
-                            }
-                            break;
+                                break;
+                        }
+                        break;
                 }
                 //if(input.type != "MouseButtonDown")
                 //for (int i = 0; i < server.GetComponent<ServerUDP>().AllGameObjects.Count; i++)
@@ -236,5 +246,17 @@ public class PlayerController : MonoBehaviour
     {
         inputs.Add(input);
         //ProcessInput();
+    }
+    /*public void AddStates(string state)
+    {
+        states.Add(state);
+    }
+    public void ClearStates()
+    {
+        states.Clear();
+    }*/
+    public string GetPlayerState()
+    {
+        return state.ToString();
     }
 }
