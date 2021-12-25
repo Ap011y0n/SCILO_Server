@@ -7,6 +7,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 namespace CustomClasses
 {
@@ -137,6 +139,9 @@ public class ServerUDP : MonoBehaviour
     public GameObject player1;
     public GameObject player2;
 
+    public bool victory = false;
+    public int deathCounter = 0;
+    public int maxdeaths = 1;
     Client client1 = new Client();
     Client client2 = new Client();
 
@@ -146,7 +151,6 @@ public class ServerUDP : MonoBehaviour
     Thread receiveThread1 = null;
     Thread receiveThread2 = null;
     int frameCounter = 0;
-
 
     private int port = 7777;
     private IPEndPoint ipep;
@@ -217,6 +221,16 @@ public class ServerUDP : MonoBehaviour
                 
 
             
+        }
+        if(victory && !client1.active && !client2.active)
+        {
+            EndConnection();
+            SceneManager.LoadScene("ServerScene");
+        }
+        if(deathCounter > maxdeaths && !client1.active && !client2.active)
+        {
+            EndConnection();
+            SceneManager.LoadScene("ServerScene");
         }
     }
 
@@ -409,6 +423,11 @@ public class ServerUDP : MonoBehaviour
 
                 if (client1.active)
                 {
+                    if(deathCounter > maxdeaths)
+                        message.addType("Defeat");
+
+                    if (victory)
+                        message.addType("Victory");
                     try
                     {
                     if (ACK1 != -1)
@@ -431,6 +450,10 @@ public class ServerUDP : MonoBehaviour
                 }
                 if (client2.active)
                 {
+                    if (deathCounter > maxdeaths)
+                        message.addType("Defeat");
+                    if (victory)
+                        message.addType("Victory");
                     try
                     {
                     if (ACK2 != -1)

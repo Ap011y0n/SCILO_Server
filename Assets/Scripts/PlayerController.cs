@@ -232,6 +232,7 @@ public class PlayerController : MonoBehaviour
             Vector3 respawnPos = otherPlayer.transform.position;
             respawnPos.y += 3;
             transform.position = respawnPos;
+            server.GetComponent<ServerUDP>().deathCounter++;
         }
 
         if (other.gameObject.CompareTag("Threshold"))
