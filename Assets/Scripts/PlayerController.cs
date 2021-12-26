@@ -55,7 +55,14 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(transform.position.y <= -6.5)
+        {
+            Vector3 respawnPos = otherPlayer.transform.position;
+            respawnPos.y += 3;
+            transform.position = respawnPos;
+            server.GetComponent<ServerUDP>().deathCounter++;
+            server.GetComponent<ServerUDP>().addRespawn2Message = true;
+        }
         
         ProcessInput();
     }
