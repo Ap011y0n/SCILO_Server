@@ -180,7 +180,10 @@ public class ServerUDP : MonoBehaviour
     int ACK1 = -1;
     int ACK2 = -1;
 
-
+    private void Awake()
+    {
+        Application.targetFrameRate = 60;
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -370,7 +373,7 @@ public class ServerUDP : MonoBehaviour
     {
         while(true)
         {
-            if (frameCounter >= 5)
+            if (frameCounter >= 2)
             {
                 List<CustomClasses.SceneObject> UpdatedGameObjects = new List<CustomClasses.SceneObject>(); 
                 foreach (CustomClasses.SceneObject go in DynamicGameObjects)
@@ -452,8 +455,9 @@ public class ServerUDP : MonoBehaviour
                     }
                     MemoryStream stream = new MemoryStream();
                     stream = serializeJson(message);
-                    client1.socket.SendTo(stream.ToArray(), SocketFlags.None, client1.remote);
-                    message.messageTypes.Remove("acknowledgement");
+                        Thread sendmessage = new Thread(() => sendtoClient1(stream));
+                        sendmessage.Start();
+                        message.messageTypes.Remove("acknowledgement");
                     }
                     catch (SystemException e)
                     {
@@ -470,16 +474,17 @@ public class ServerUDP : MonoBehaviour
                         message.addType("Victory");
                     try
                     {
-                    if (ACK2 != -1)
-                    {
-                        message.addType("acknowledgement");
-                        message.ACK = ACK2;
-                        ACK2 = -1;
-                    }
-                    MemoryStream stream = new MemoryStream();
-                    stream = serializeJson(message);
-                    client2.socket.SendTo(stream.ToArray(), SocketFlags.None, client2.remote);
-                    message.messageTypes.Remove("acknowledgement");
+                        if (ACK2 != -1)
+                        {
+                            message.addType("acknowledgement");
+                            message.ACK = ACK2;
+                            ACK2 = -1;
+                        }
+                        MemoryStream stream = new MemoryStream();
+                        stream = serializeJson(message);
+                        Thread sendmessage = new Thread(() => sendtoClient2(stream));
+                        sendmessage.Start();
+                        message.messageTypes.Remove("acknowledgement");
 
                     }
                     catch (SystemException e)
@@ -504,6 +509,17 @@ public class ServerUDP : MonoBehaviour
             }
         }
        
+    }
+
+    void sendtoClient1(MemoryStream stream)
+    {
+        client1.socket.SendTo(stream.ToArray(), SocketFlags.None, client1.remote);
+
+    }
+    void sendtoClient2(MemoryStream stream)
+    {
+        client2.socket.SendTo(stream.ToArray(), SocketFlags.None, client2.remote);
+
     }
     void ThreadReceive1()
     { 
